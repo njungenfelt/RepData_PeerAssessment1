@@ -22,7 +22,7 @@ stepsByDay <-
     activity %>%
     group_by(date) %>%
     summarise(tot = sum(steps))
-hist(stepsByDay$tot)
+hist(stepsByDay$tot,breaks=10)
 ```
 
 ![](./PA1_template_files/figure-html/histogram-1.png) 
@@ -62,6 +62,7 @@ plot(stepsByInterval, type = "l")
 ![](./PA1_template_files/figure-html/plot_daily-1.png) 
 
 ### Most intense interval
+The following is the 5-minute interval containing the maximum number of steps:
 
 ```r
 stepsByInterval$interval[which.max(stepsByInterval$avg)]
@@ -84,6 +85,7 @@ sum(is.na(activity$steps))
 ```
 
 ### Filling missing values
+To fill NA values my strategy is repetition of the leftmost or rightmost non-NA value in the exterior, and linear interpolation in the interior. I do this using the function na.fill from the zoo package:
 
 ```r
 activityFilled <- activity
@@ -92,10 +94,12 @@ stepsByDayFilled <-
     activityFilled %>%
     group_by(date) %>%
     summarise(tot = sum(steps))
-hist(stepsByDayFilled$tot)
+hist(stepsByDayFilled$tot,breaks=10)
 ```
 
 ![](./PA1_template_files/figure-html/na_fill-1.png) 
+
+### Mean value
 
 ```r
 mean(stepsByDayFilled$tot)
@@ -105,6 +109,8 @@ mean(stepsByDayFilled$tot)
 ## [1] 9354.23
 ```
 
+### Median value
+
 ```r
 median(stepsByDayFilled$tot)
 ```
@@ -112,6 +118,8 @@ median(stepsByDayFilled$tot)
 ```
 ## [1] 10395
 ```
+
+The values are now lower, as my strategy gives more days with zero activity.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

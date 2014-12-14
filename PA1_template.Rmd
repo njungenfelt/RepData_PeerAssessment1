@@ -29,7 +29,7 @@ stepsByDay <-
     activity %>%
     group_by(date) %>%
     summarise(tot = sum(steps))
-hist(stepsByDay$tot)
+hist(stepsByDay$tot,breaks=10)
 ```
 
 ### Mean value
@@ -54,6 +54,7 @@ plot(stepsByInterval, type = "l")
 ```
 
 ### Most intense interval
+The following is the 5-minute interval containing the maximum number of steps:
 ```{r intense_interval}
 stepsByInterval$interval[which.max(stepsByInterval$avg)]
 ```
@@ -66,6 +67,7 @@ sum(is.na(activity$steps))
 ```
 
 ### Filling missing values
+To fill NA values my strategy is repetition of the leftmost or rightmost non-NA value in the exterior, and linear interpolation in the interior. I do this using the function na.fill from the zoo package:
 ```{r na_fill}
 activityFilled <- activity
 activityFilled$steps <- na.fill(activity$steps, "extend")
@@ -73,10 +75,20 @@ stepsByDayFilled <-
     activityFilled %>%
     group_by(date) %>%
     summarise(tot = sum(steps))
-hist(stepsByDayFilled$tot)
+hist(stepsByDayFilled$tot,breaks=10)
+```
+
+### Mean value
+```{r mean2}
 mean(stepsByDayFilled$tot)
+```
+
+### Median value
+```{r median2}
 median(stepsByDayFilled$tot)
 ```
+
+The values are now lower, as my strategy gives more days with zero activity.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r weekdays}
