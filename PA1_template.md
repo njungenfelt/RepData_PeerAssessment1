@@ -1,18 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setoptions, echo = FALSE, warning = FALSE, message = FALSE, results = 'hide'}
-require(knitr)
-opts_chunk$set(echo = TRUE, results = "markup", message = FALSE)
-Sys.setlocale("LC_TIME", "English")
-```
+
 
 ## Loading and preprocessing the data
-```{r load_preprocess, warning = FALSE}
+
+```r
 require(dplyr)
 require(zoo)
 require(lattice)
@@ -24,7 +16,8 @@ activity$date = as.Date(activity$date)
 ## What is mean total number of steps taken per day?
 
 ### Histogram
-```{r histogram}
+
+```r
 stepsByDay <-
     activity %>%
     group_by(date) %>%
@@ -32,20 +25,33 @@ stepsByDay <-
 hist(stepsByDay$tot)
 ```
 
+![](./PA1_template_files/figure-html/histogram-1.png) 
+
 ### Mean value
-```{r mean}
+
+```r
 mean(stepsByDay$tot, na.rm = TRUE)
 ```
 
+```
+## [1] 10766.19
+```
+
 ### Median value
-```{r median}
+
+```r
 median(stepsByDay$tot, na.rm = TRUE)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
 ### Plot of typical day
-```{r plot_daily}
+
+```r
 stepsByInterval <-
     activity %>%
     group_by(interval) %>%
@@ -53,20 +59,33 @@ stepsByInterval <-
 plot(stepsByInterval, type = "l")
 ```
 
+![](./PA1_template_files/figure-html/plot_daily-1.png) 
+
 ### Most intense interval
-```{r intense_interval}
+
+```r
 stepsByInterval$interval[which.max(stepsByInterval$avg)]
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 
 ### Number of missing values
-```{r nbr_na}
+
+```r
 sum(is.na(activity$steps))
 ```
 
+```
+## [1] 2304
+```
+
 ### Filling missing values
-```{r na_fill}
+
+```r
 activityFilled <- activity
 activityFilled$steps <- na.fill(activity$steps, "extend")
 stepsByDayFilled <-
@@ -74,12 +93,29 @@ stepsByDayFilled <-
     group_by(date) %>%
     summarise(tot = sum(steps))
 hist(stepsByDayFilled$tot)
+```
+
+![](./PA1_template_files/figure-html/na_fill-1.png) 
+
+```r
 mean(stepsByDayFilled$tot)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(stepsByDayFilled$tot)
 ```
 
+```
+## [1] 10395
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekdays}
+
+```r
 day <- as.factor(ifelse(weekdays(activityFilled$date) %in% c("Saturday","Sunday"), "Weekend", "Weekday"))
 activityExtended <- cbind(activityFilled, day)
 stepsByIntervalExtended <-
@@ -88,3 +124,5 @@ stepsByIntervalExtended <-
     summarise(avg = mean(steps, na.rm = TRUE))
 xyplot(avg ~ interval|day,stepsByIntervalExtended, type = "l", layout = c(1,2))
 ```
+
+![](./PA1_template_files/figure-html/weekdays-1.png) 
